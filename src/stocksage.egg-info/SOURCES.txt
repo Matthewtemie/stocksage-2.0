@@ -1,7 +1,0 @@
-pyproject.toml
-src/stocksage.egg-info/PKG-INFO
-src/stocksage.egg-info/SOURCES.txt
-src/stocksage.egg-info/dependency_links.txt
-src/stocksage.egg-info/requires.txt
-src/stocksage.egg-info/top_level.txt
-src/stocksage/notifications/__init__.py
