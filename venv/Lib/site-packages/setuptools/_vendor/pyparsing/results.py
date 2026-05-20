@@ -145,9 +145,7 @@ class ParseResults:
             self._toklist = []
         elif isinstance(toklist, (list, _generator_type)):
             self._toklist = (
-                [toklist[:]]
-                if isinstance(toklist, ParseResults.List)
-                else list(toklist)
+                [toklist[:]] if isinstance(toklist, ParseResults.List) else list(toklist)
             )
         else:
             self._toklist = [toklist]
@@ -156,9 +154,7 @@ class ParseResults:
 
     # Performance tuning: we construct a *lot* of these, so keep this
     # constructor as small and fast as possible
-    def __init__(
-        self, toklist=None, name=None, asList=True, modal=True, isinstance=isinstance
-    ):
+    def __init__(self, toklist=None, name=None, asList=True, modal=True, isinstance=isinstance):
         self._modal = modal
         if name is not None and name != "":
             if isinstance(name, int):
@@ -171,13 +167,9 @@ class ParseResults:
                     toklist = [toklist]
                 if asList:
                     if isinstance(toklist, ParseResults):
-                        self[name] = _ParseResultsWithOffset(
-                            ParseResults(toklist._toklist), 0
-                        )
+                        self[name] = _ParseResultsWithOffset(ParseResults(toklist._toklist), 0)
                     else:
-                        self[name] = _ParseResultsWithOffset(
-                            ParseResults(toklist[0]), 0
-                        )
+                        self[name] = _ParseResultsWithOffset(ParseResults(toklist[0]), 0)
                     self[name]._name = name
                 else:
                     try:
@@ -205,9 +197,7 @@ class ParseResults:
             self._toklist[k] = v
             sub = v
         else:
-            self._tokdict[k] = self._tokdict.get(k, list()) + [
-                _ParseResultsWithOffset(v, 0)
-            ]
+            self._tokdict[k] = self._tokdict.get(k, list()) + [_ParseResultsWithOffset(v, 0)]
             sub = v
         if isinstance(sub, ParseResults):
             sub._parent = wkref(self)
@@ -229,9 +219,7 @@ class ParseResults:
             for name, occurrences in self._tokdict.items():
                 for j in removed:
                     for k, (value, position) in enumerate(occurrences):
-                        occurrences[k] = _ParseResultsWithOffset(
-                            value, position - (position > j)
-                        )
+                        occurrences[k] = _ParseResultsWithOffset(value, position - (position > j))
         else:
             del self._tokdict[i]
 
@@ -311,9 +299,7 @@ class ParseResults:
             if k == "default":
                 args = (args[0], v)
             else:
-                raise TypeError(
-                    "pop() got an unexpected keyword argument {!r}".format(k)
-                )
+                raise TypeError("pop() got an unexpected keyword argument {!r}".format(k))
         if isinstance(args[0], int) or len(args) == 1 or args[0] in self:
             index = args[0]
             ret = self[index]
@@ -367,9 +353,7 @@ class ParseResults:
         # fixup indices in token dictionary
         for name, occurrences in self._tokdict.items():
             for k, (value, position) in enumerate(occurrences):
-                occurrences[k] = _ParseResultsWithOffset(
-                    value, position + (position > index)
-                )
+                occurrences[k] = _ParseResultsWithOffset(value, position + (position > index))
 
     def append(self, item):
         """
@@ -461,12 +445,7 @@ class ParseResults:
     def __str__(self) -> str:
         return (
             "["
-            + ", ".join(
-                [
-                    str(i) if isinstance(i, ParseResults) else repr(i)
-                    for i in self._toklist
-                ]
-            )
+            + ", ".join([str(i) if isinstance(i, ParseResults) else repr(i) for i in self._toklist])
             + "]"
         )
 
@@ -496,10 +475,7 @@ class ParseResults:
             result_list = result.as_list()
             print(type(result_list), result_list) # -> <class 'list'> ['sldkj', 'lsdkj', 'sldkj']
         """
-        return [
-            res.as_list() if isinstance(res, ParseResults) else res
-            for res in self._toklist
-        ]
+        return [res.as_list() if isinstance(res, ParseResults) else res for res in self._toklist]
 
     def as_dict(self) -> dict:
         """
@@ -573,12 +549,7 @@ class ParseResults:
 
             def find_in_parent(sub):
                 return next(
-                    (
-                        k
-                        for k, vlist in par._tokdict.items()
-                        for v, loc in vlist
-                        if sub is v
-                    ),
+                    (k for k, vlist in par._tokdict.items() for v, loc in vlist if sub is v),
                     None,
                 )
 

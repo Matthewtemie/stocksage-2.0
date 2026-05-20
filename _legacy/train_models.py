@@ -31,19 +31,18 @@ Properties:
 =============================================================================
 """
 
-import pandas as pd
-import numpy as np
 import json
 import os
-import joblib
 from datetime import datetime
 
-from sklearn.preprocessing import StandardScaler
+import joblib
+import numpy as np
+import pandas as pd
+from data_pipeline import FEATURE_COLUMNS, STOCKS, prepare_all_stocks
+from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.linear_model import HuberRegressor
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-
-from data_pipeline import STOCKS, FEATURE_COLUMNS, prepare_all_stocks
+from sklearn.preprocessing import StandardScaler
 
 
 def huber_loss(y_true, y_pred, epsilon=1.35):
@@ -86,22 +85,20 @@ def train_and_evaluate(X_train, X_test, y_train, y_test):
     EPSILON = 1.35
 
     models = {
-        "Huber Regressor": HuberRegressor(
-            epsilon=EPSILON, max_iter=500, alpha=0.0001
-        ),
+        "Huber Regressor": HuberRegressor(epsilon=EPSILON, max_iter=500, alpha=0.0001),
         "Random Forest": RandomForestRegressor(
             n_estimators=100,
             max_depth=10,
             criterion="squared_error",  # RF doesn't have native Huber,
-            random_state=42,            # but we SELECT the winner by Huber
+            random_state=42,  # but we SELECT the winner by Huber
             n_jobs=-1,
         ),
         "Gradient Boosting": GradientBoostingRegressor(
             n_estimators=200,
             max_depth=5,
             learning_rate=0.05,
-            loss="huber",               # ← native Huber loss!
-            alpha=0.95,                 # quantile for Huber transition
+            loss="huber",  # ← native Huber loss!
+            alpha=0.95,  # quantile for Huber transition
             random_state=42,
         ),
     }
@@ -120,14 +117,12 @@ def train_and_evaluate(X_train, X_test, y_train, y_test):
         r2 = r2_score(y_test, y_pred)
 
         # Directional accuracy: did we predict the right direction?
-        direction_correct = np.mean(
-            (y_pred > 0) == (y_test.values > 0)
-        ) * 100
+        direction_correct = np.mean((y_pred > 0) == (y_test.values > 0)) * 100
 
         results[name] = {
             "huber_loss": round(float(h_loss * 1e4), 4),  # scaled ×10⁴ for readability
-            "mae": round(mae * 100, 4),       # as percentage points
-            "rmse": round(rmse * 100, 4),      # as percentage points
+            "mae": round(mae * 100, 4),  # as percentage points
+            "rmse": round(rmse * 100, 4),  # as percentage points
             "r2": round(r2, 4),
             "direction_acc": round(direction_correct, 1),
         }
@@ -215,7 +210,7 @@ def train_all_models():
             f"{t:<8} {r['best_model']:<22} {m['huber_loss']:<15} "
             f"{m['direction_acc']}%{'':<4} {m['mae']:.3f}%"
         )
-    print(f"\n All models saved to models/")
+    print("\n All models saved to models/")
     return report
 
 

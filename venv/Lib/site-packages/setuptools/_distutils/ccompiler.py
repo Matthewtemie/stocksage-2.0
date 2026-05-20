@@ -167,8 +167,7 @@ class CCompiler:
         for key in kwargs:
             if key not in self.executables:
                 raise ValueError(
-                    "unknown executable '%s' for class %s"
-                    % (key, self.__class__.__name__)
+                    "unknown executable '%s' for class %s" % (key, self.__class__.__name__)
                 )
             self.set_executable(key, kwargs[key])
 
@@ -194,10 +193,7 @@ class CCompiler:
         for defn in definitions:
             if not (
                 isinstance(defn, tuple)
-                and (
-                    len(defn) in (1, 2)
-                    and (isinstance(defn[1], str) or defn[1] is None)
-                )
+                and (len(defn) in (1, 2) and (isinstance(defn[1], str) or defn[1] is None))
                 and isinstance(defn[0], str)
             ):
                 raise TypeError(
@@ -358,9 +354,9 @@ class CCompiler:
 
     def _get_cc_args(self, pp_opts, debug, before):
         # works for unixccompiler, cygwinccompiler
-        cc_args = pp_opts + ['-c']
+        cc_args = pp_opts + ["-c"]
         if debug:
-            cc_args[:0] = ['-g']
+            cc_args[:0] = ["-g"]
         if before:
             cc_args[:0] = before
         return cc_args
@@ -459,13 +455,9 @@ class CCompiler:
         if runtime_library_dirs is None:
             runtime_library_dirs = self.runtime_library_dirs
         elif isinstance(runtime_library_dirs, (list, tuple)):
-            runtime_library_dirs = list(runtime_library_dirs) + (
-                self.runtime_library_dirs or []
-            )
+            runtime_library_dirs = list(runtime_library_dirs) + (self.runtime_library_dirs or [])
         else:
-            raise TypeError(
-                "'runtime_library_dirs' (if supplied) " "must be a list of strings"
-            )
+            raise TypeError("'runtime_library_dirs' (if supplied) " "must be a list of strings")
 
         return (libraries, library_dirs, runtime_library_dirs)
 
@@ -477,7 +469,7 @@ class CCompiler:
             return True
         else:
             if self.dry_run:
-                newer = newer_group(objects, output_file, missing='newer')
+                newer = newer_group(objects, output_file, missing="newer")
             else:
                 newer = newer_group(objects, output_file)
             return newer
@@ -720,7 +712,7 @@ class CCompiler:
         self.link(
             CCompiler.SHARED_LIBRARY,
             objects,
-            self.library_filename(output_libname, lib_type='shared'),
+            self.library_filename(output_libname, lib_type="shared"),
             output_dir,
             libraries,
             library_dirs,
@@ -865,13 +857,11 @@ int main (int argc, char **argv) {
             os.remove(fname)
 
         try:
-            self.link_executable(
-                objects, "a.out", libraries=libraries, library_dirs=library_dirs
-            )
+            self.link_executable(objects, "a.out", libraries=libraries, library_dirs=library_dirs)
         except (LinkError, TypeError):
             return False
         else:
-            os.remove(os.path.join(self.output_dir or '', "a.out"))
+            os.remove(os.path.join(self.output_dir or "", "a.out"))
         finally:
             for fn in objects:
                 os.remove(fn)
@@ -920,12 +910,11 @@ int main (int argc, char **argv) {
     #   * exe_extension -
     #     extension for executable files, eg. '' or '.exe'
 
-    def object_filenames(self, source_filenames, strip_dir=0, output_dir=''):
+    def object_filenames(self, source_filenames, strip_dir=0, output_dir=""):
         if output_dir is None:
-            output_dir = ''
+            output_dir = ""
         return list(
-            self._make_out_path(output_dir, strip_dir, src_name)
-            for src_name in source_filenames
+            self._make_out_path(output_dir, strip_dir, src_name) for src_name in source_filenames
         )
 
     @property
@@ -938,9 +927,7 @@ int main (int argc, char **argv) {
         try:
             new_ext = self.out_extensions[ext]
         except LookupError:
-            raise UnknownFileError(
-                "unknown file type '{}' (from '{}')".format(ext, src_name)
-            )
+            raise UnknownFileError("unknown file type '{}' (from '{}')".format(ext, src_name))
         if strip_dir:
             base = os.path.basename(base)
         return os.path.join(output_dir, base + new_ext)
@@ -957,20 +944,20 @@ int main (int argc, char **argv) {
         # If abs, chop off leading /
         return no_drive[os.path.isabs(no_drive) :]
 
-    def shared_object_filename(self, basename, strip_dir=0, output_dir=''):
+    def shared_object_filename(self, basename, strip_dir=0, output_dir=""):
         assert output_dir is not None
         if strip_dir:
             basename = os.path.basename(basename)
         return os.path.join(output_dir, basename + self.shared_lib_extension)
 
-    def executable_filename(self, basename, strip_dir=0, output_dir=''):
+    def executable_filename(self, basename, strip_dir=0, output_dir=""):
         assert output_dir is not None
         if strip_dir:
             basename = os.path.basename(basename)
-        return os.path.join(output_dir, basename + (self.exe_extension or ''))
+        return os.path.join(output_dir, basename + (self.exe_extension or ""))
 
     def library_filename(
-        self, libname, lib_type='static', strip_dir=0, output_dir=''  # or 'shared'
+        self, libname, lib_type="static", strip_dir=0, output_dir=""  # or 'shared'
     ):
         assert output_dir is not None
         expected = '"static", "shared", "dylib", "xcode_stub"'
@@ -982,7 +969,7 @@ int main (int argc, char **argv) {
         dir, base = os.path.split(libname)
         filename = fmt % (base, ext)
         if strip_dir:
-            dir = ''
+            dir = ""
 
         return os.path.join(output_dir, dir, filename)
 
@@ -1021,10 +1008,10 @@ _default_compilers = (
     # Platform string mappings
     # on a cygwin built python we can use gcc like an ordinary UNIXish
     # compiler
-    ('cygwin.*', 'unix'),
+    ("cygwin.*", "unix"),
     # OS name mappings
-    ('posix', 'unix'),
-    ('nt', 'msvc'),
+    ("posix", "unix"),
+    ("nt", "msvc"),
 )
 
 
@@ -1043,32 +1030,29 @@ def get_default_compiler(osname=None, platform=None):
     if platform is None:
         platform = sys.platform
     for pattern, compiler in _default_compilers:
-        if (
-            re.match(pattern, platform) is not None
-            or re.match(pattern, osname) is not None
-        ):
+        if re.match(pattern, platform) is not None or re.match(pattern, osname) is not None:
             return compiler
     # Default to Unix compiler
-    return 'unix'
+    return "unix"
 
 
 # Map compiler types to (module_name, class_name) pairs -- ie. where to
 # find the code that implements an interface to this compiler.  (The module
 # is assumed to be in the 'distutils' package.)
 compiler_class = {
-    'unix': ('unixccompiler', 'UnixCCompiler', "standard UNIX-style compiler"),
-    'msvc': ('_msvccompiler', 'MSVCCompiler', "Microsoft Visual C++"),
-    'cygwin': (
-        'cygwinccompiler',
-        'CygwinCCompiler',
+    "unix": ("unixccompiler", "UnixCCompiler", "standard UNIX-style compiler"),
+    "msvc": ("_msvccompiler", "MSVCCompiler", "Microsoft Visual C++"),
+    "cygwin": (
+        "cygwinccompiler",
+        "CygwinCCompiler",
         "Cygwin port of GNU C Compiler for Win32",
     ),
-    'mingw32': (
-        'cygwinccompiler',
-        'Mingw32CCompiler',
+    "mingw32": (
+        "cygwinccompiler",
+        "Mingw32CCompiler",
         "Mingw32 port of GNU C Compiler for Win32",
     ),
-    'bcpp': ('bcppcompiler', 'BCPPCompiler', "Borland C++ Compiler"),
+    "bcpp": ("bcppcompiler", "BCPPCompiler", "Borland C++ Compiler"),
 }
 
 
@@ -1212,9 +1196,7 @@ def gen_lib_options(compiler, library_dirs, runtime_library_dirs, libraries):
             if lib_file:
                 lib_opts.append(lib_file)
             else:
-                compiler.warn(
-                    "no library file corresponding to " "'%s' found (skipping)" % lib
-                )
+                compiler.warn("no library file corresponding to " "'%s' found (skipping)" % lib)
         else:
             lib_opts.append(compiler.library_option(lib))
     return lib_opts

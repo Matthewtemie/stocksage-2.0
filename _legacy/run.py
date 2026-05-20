@@ -14,8 +14,8 @@ Environment variables:
   SENDER_PASSWORD    → Gmail App Password (NOT your regular password)
 """
 
-import sys
 import os
+import sys
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -48,9 +48,7 @@ def main():
         train_all_models()
 
         if mode == "--train-only":
-            print(
-                "\n Done! Run `python run.py --app-only` to start the web app."
-            )
+            print("\n Done! Run `python run.py --app-only` to start the web app.")
             return
 
     if mode in ("--full", "--predict"):

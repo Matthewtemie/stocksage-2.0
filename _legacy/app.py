@@ -15,13 +15,13 @@ Routes (URL addresses):
 =============================================================================
 """
 
-from flask import Flask, render_template, jsonify, request, redirect, url_for
 import json
 import os
 from datetime import datetime
-from apscheduler.schedulers.background import BackgroundScheduler
 
+from apscheduler.schedulers.background import BackgroundScheduler
 from data_pipeline import STOCKS
+from flask import Flask, jsonify, redirect, render_template, request, url_for
 from predict_and_notify import predict_all_stocks, send_email
 
 # Get the directory where THIS file lives — ensures Flask finds templates/

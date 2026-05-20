@@ -33,9 +33,7 @@ def mkpath(name, mode=0o777, verbose=1, dry_run=0):  # noqa: C901
 
     # Detect a common bug -- name is None
     if not isinstance(name, str):
-        raise DistutilsInternalError(
-            "mkpath: 'name' must be a string (got {!r})".format(name)
-        )
+        raise DistutilsInternalError("mkpath: 'name' must be a string (got {!r})".format(name))
 
     # XXX what's the better way to handle verbosity? print as we create
     # each directory in the path (the current behaviour), or only announce
@@ -44,7 +42,7 @@ def mkpath(name, mode=0o777, verbose=1, dry_run=0):  # noqa: C901
 
     name = os.path.normpath(name)
     created_dirs = []
-    if os.path.isdir(name) or name == '':
+    if os.path.isdir(name) or name == "":
         return created_dirs
     if _path_created.get(os.path.abspath(name)):
         return created_dirs
@@ -75,9 +73,7 @@ def mkpath(name, mode=0o777, verbose=1, dry_run=0):  # noqa: C901
                 os.mkdir(head, mode)
             except OSError as exc:
                 if not (exc.errno == errno.EEXIST and os.path.isdir(head)):
-                    raise DistutilsFileError(
-                        "could not create '{}': {}".format(head, exc.args[-1])
-                    )
+                    raise DistutilsFileError("could not create '{}': {}".format(head, exc.args[-1]))
             created_dirs.append(head)
 
         _path_created[abs_head] = 1
@@ -143,9 +139,7 @@ def copy_tree(  # noqa: C901
         if dry_run:
             names = []
         else:
-            raise DistutilsFileError(
-                "error listing files in '{}': {}".format(src, e.strerror)
-            )
+            raise DistutilsFileError("error listing files in '{}': {}".format(src, e.strerror))
 
     if not dry_run:
         mkpath(dst, verbose=verbose)
@@ -156,7 +150,7 @@ def copy_tree(  # noqa: C901
         src_name = os.path.join(src, n)
         dst_name = os.path.join(dst, n)
 
-        if n.startswith('.nfs'):
+        if n.startswith(".nfs"):
             # skip NFS rename files
             continue
 

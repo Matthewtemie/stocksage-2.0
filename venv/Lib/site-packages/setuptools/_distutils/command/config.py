@@ -25,16 +25,16 @@ class config(Command):
     description = "prepare to build"
 
     user_options = [
-        ('compiler=', None, "specify the compiler type"),
-        ('cc=', None, "specify the compiler executable"),
-        ('include-dirs=', 'I', "list of directories to search for header files"),
-        ('define=', 'D', "C preprocessor macros to define"),
-        ('undef=', 'U', "C preprocessor macros to undefine"),
-        ('libraries=', 'l', "external C libraries to link with"),
-        ('library-dirs=', 'L', "directories to search for external C libraries"),
-        ('noisy', None, "show every action (compile, link, run, ...) taken"),
+        ("compiler=", None, "specify the compiler type"),
+        ("cc=", None, "specify the compiler executable"),
+        ("include-dirs=", "I", "list of directories to search for header files"),
+        ("define=", "D", "C preprocessor macros to define"),
+        ("undef=", "U", "C preprocessor macros to undefine"),
+        ("libraries=", "l", "external C libraries to link with"),
+        ("library-dirs=", "L", "directories to search for external C libraries"),
+        ("noisy", None, "show every action (compile, link, run, ...) taken"),
         (
-            'dump-source',
+            "dump-source",
             None,
             "dump generated source files before attempting to compile them",
         ),
@@ -90,9 +90,7 @@ class config(Command):
         from distutils.ccompiler import CCompiler, new_compiler
 
         if not isinstance(self.compiler, CCompiler):
-            self.compiler = new_compiler(
-                compiler=self.compiler, dry_run=self.dry_run, force=1
-            )
+            self.compiler = new_compiler(compiler=self.compiler, dry_run=self.dry_run, force=1)
             customize_compiler(self.compiler)
             if self.include_dirs:
                 self.compiler.set_include_dirs(self.include_dirs)
@@ -150,7 +148,7 @@ class config(Command):
         if not filenames:
             filenames = self.temp_files
             self.temp_files = []
-        log.info("removing: %s", ' '.join(filenames))
+        log.info("removing: %s", " ".join(filenames))
         for filename in filenames:
             try:
                 os.remove(filename)
@@ -204,7 +202,7 @@ class config(Command):
             match = False
             while True:
                 line = file.readline()
-                if line == '':
+                if line == "":
                     break
                 if pattern.search(line):
                     match = True
@@ -273,9 +271,7 @@ class config(Command):
 
         self._check_compiler()
         try:
-            src, obj, exe = self._link(
-                body, headers, include_dirs, libraries, library_dirs, lang
-            )
+            src, obj, exe = self._link(body, headers, include_dirs, libraries, library_dirs, lang)
             self.spawn([exe])
             ok = True
         except (CompileError, LinkError, DistutilsExecError):
@@ -356,9 +352,7 @@ class config(Command):
         exists and can be found by the preprocessor; return true if so,
         false otherwise.
         """
-        return self.try_cpp(
-            body="/* No body */", headers=[header], include_dirs=include_dirs
-        )
+        return self.try_cpp(body="/* No body */", headers=[header], include_dirs=include_dirs)
 
 
 def dump_file(filename, head=None):
@@ -367,7 +361,7 @@ def dump_file(filename, head=None):
     If head is not None, will be dumped before the file content.
     """
     if head is None:
-        log.info('%s', filename)
+        log.info("%s", filename)
     else:
         log.info(head)
     file = open(filename)

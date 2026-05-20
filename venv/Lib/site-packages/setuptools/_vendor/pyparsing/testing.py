@@ -49,23 +49,17 @@ class pyparsing_test:
             self._save_context["default_whitespace"] = ParserElement.DEFAULT_WHITE_CHARS
             self._save_context["default_keyword_chars"] = Keyword.DEFAULT_KEYWORD_CHARS
 
-            self._save_context[
-                "literal_string_class"
-            ] = ParserElement._literalStringClass
+            self._save_context["literal_string_class"] = ParserElement._literalStringClass
 
             self._save_context["verbose_stacktrace"] = ParserElement.verbose_stacktrace
 
             self._save_context["packrat_enabled"] = ParserElement._packratEnabled
             if ParserElement._packratEnabled:
-                self._save_context[
-                    "packrat_cache_size"
-                ] = ParserElement.packrat_cache.size
+                self._save_context["packrat_cache_size"] = ParserElement.packrat_cache.size
             else:
                 self._save_context["packrat_cache_size"] = None
             self._save_context["packrat_parse"] = ParserElement._parse
-            self._save_context[
-                "recursion_enabled"
-            ] = ParserElement._left_recursion_enabled
+            self._save_context["recursion_enabled"] = ParserElement._left_recursion_enabled
 
             self._save_context["__diag__"] = {
                 name: getattr(__diag__, name) for name in __diag__._all_names
@@ -79,20 +73,13 @@ class pyparsing_test:
 
         def restore(self):
             # reset pyparsing global state
-            if (
-                ParserElement.DEFAULT_WHITE_CHARS
-                != self._save_context["default_whitespace"]
-            ):
-                ParserElement.set_default_whitespace_chars(
-                    self._save_context["default_whitespace"]
-                )
+            if ParserElement.DEFAULT_WHITE_CHARS != self._save_context["default_whitespace"]:
+                ParserElement.set_default_whitespace_chars(self._save_context["default_whitespace"])
 
             ParserElement.verbose_stacktrace = self._save_context["verbose_stacktrace"]
 
             Keyword.DEFAULT_KEYWORD_CHARS = self._save_context["default_keyword_chars"]
-            ParserElement.inlineLiteralsUsing(
-                self._save_context["literal_string_class"]
-            )
+            ParserElement.inlineLiteralsUsing(self._save_context["literal_string_class"])
 
             for name, value in self._save_context["__diag__"].items():
                 (__diag__.enable if value else __diag__.disable)(name)
@@ -102,9 +89,7 @@ class pyparsing_test:
                 ParserElement.enable_packrat(self._save_context["packrat_cache_size"])
             else:
                 ParserElement._parse = self._save_context["packrat_parse"]
-            ParserElement._left_recursion_enabled = self._save_context[
-                "recursion_enabled"
-            ]
+            ParserElement._left_recursion_enabled = self._save_context["recursion_enabled"]
 
             __compat__.collect_all_And_tokens = self._save_context["__compat__"]
 
@@ -138,9 +123,7 @@ class pyparsing_test:
             if expected_dict is not None:
                 self.assertEqual(expected_dict, result.as_dict(), msg=msg)
 
-        def assertParseAndCheckList(
-            self, expr, test_string, expected_list, msg=None, verbose=True
-        ):
+        def assertParseAndCheckList(self, expr, test_string, expected_list, msg=None, verbose=True):
             """
             Convenience wrapper assert to test a parser element and input string, and assert that
             the resulting ``ParseResults.asList()`` is equal to the ``expected_list``.
@@ -152,9 +135,7 @@ class pyparsing_test:
                 print(result.as_list())
             self.assertParseResultsEquals(result, expected_list=expected_list, msg=msg)
 
-        def assertParseAndCheckDict(
-            self, expr, test_string, expected_dict, msg=None, verbose=True
-        ):
+        def assertParseAndCheckDict(self, expr, test_string, expected_dict, msg=None, verbose=True):
             """
             Convenience wrapper assert to test a parser element and input string, and assert that
             the resulting ``ParseResults.asDict()`` is equal to the ``expected_dict``.
@@ -166,9 +147,7 @@ class pyparsing_test:
                 print(result.as_list())
             self.assertParseResultsEquals(result, expected_dict=expected_dict, msg=msg)
 
-        def assertRunTestResults(
-            self, run_tests_report, expected_parse_results=None, msg=None
-        ):
+        def assertRunTestResults(self, run_tests_report, expected_parse_results=None, msg=None):
             """
             Unit test assertion to evaluate output of ``ParserElement.runTests()``. If a list of
             list-dict tuples is given as the ``expected_parse_results`` argument, then these are zipped
@@ -189,9 +168,7 @@ class pyparsing_test:
                     # expected should be a tuple containing a list and/or a dict or an exception,
                     # and optional failure message string
                     # an empty tuple will skip any result validation
-                    fail_msg = next(
-                        (exp for exp in expected if isinstance(exp, str)), None
-                    )
+                    fail_msg = next((exp for exp in expected if isinstance(exp, str)), None)
                     expected_exception = next(
                         (
                             exp
@@ -225,9 +202,7 @@ class pyparsing_test:
                             print("no validation for {!r}".format(test_string))
 
             # do this last, in case some specific test results can be reported instead
-            self.assertTrue(
-                run_test_success, msg=msg if msg is not None else "failed runTests"
-            )
+            self.assertTrue(run_test_success, msg=msg if msg is not None else "failed runTests")
 
         @contextmanager
         def assertRaisesParseException(self, exc_type=ParseException, msg=None):
@@ -267,14 +242,11 @@ class pyparsing_test:
         if mark_control is not None:
             if mark_control == "unicode":
                 tbl = str.maketrans(
-                    {c: u for c, u in zip(range(0, 33), range(0x2400, 0x2433))}
-                    | {127: 0x2421}
+                    {c: u for c, u in zip(range(0, 33), range(0x2400, 0x2433))} | {127: 0x2421}
                 )
                 eol_mark = ""
             else:
-                tbl = str.maketrans(
-                    {c: mark_control for c in list(range(0, 32)) + [127]}
-                )
+                tbl = str.maketrans({c: mark_control for c in list(range(0, 32)) + [127]})
             s = s.translate(tbl)
         if mark_spaces is not None and mark_spaces != " ":
             if mark_spaces == "unicode":
@@ -313,10 +285,7 @@ class pyparsing_test:
         header1 = (
             header0
             + lead
-            + "".join(
-                "         {}".format((i + 1) % 10)
-                for i in range(-(-max_line_len // 10))
-            )
+            + "".join("         {}".format((i + 1) % 10) for i in range(-(-max_line_len // 10)))
             + "\n"
         )
         header2 = lead + "1234567890" * (-(-max_line_len // 10)) + "\n"

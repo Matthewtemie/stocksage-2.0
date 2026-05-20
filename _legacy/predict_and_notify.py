@@ -15,23 +15,22 @@ solely on model output.
 =============================================================================
 """
 
-import pandas as pd
-import numpy as np
 import json
 import os
-import joblib
 import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
+import joblib
+import pandas as pd
 from data_pipeline import (
-    STOCKS,
     FEATURE_COLUMNS,
-    get_alpaca_client,
+    STOCKS,
+    engineer_features,
     fetch_stock_data_alpaca,
     generate_sample_data,
-    engineer_features,
+    get_alpaca_client,
 )
 
 
@@ -201,9 +200,7 @@ def build_email_html(predictions):
     </div></body></html>"""
 
 
-def send_email(
-    predictions, recipient_email, sender_email=None, sender_password=None
-):
+def send_email(predictions, recipient_email, sender_email=None, sender_password=None):
     """
      SEND EMAIL VIA GMAIL SMTP
 
@@ -219,17 +216,13 @@ def send_email(
     password = sender_password or os.environ.get("SENDER_PASSWORD")
 
     if not sender or not password:
-        print(
-            "   Email not configured. "
-            "Set SENDER_EMAIL & SENDER_PASSWORD env vars."
-        )
+        print("   Email not configured. " "Set SENDER_EMAIL & SENDER_PASSWORD env vars.")
         return False
 
     try:
         msg = MIMEMultipart("alternative")
         msg["Subject"] = (
-            f" StockSage: Daily Predictions — "
-            f"{datetime.now().strftime('%b %d, %Y')}"
+            f" StockSage: Daily Predictions — " f"{datetime.now().strftime('%b %d, %Y')}"
         )
         msg["From"] = sender
         msg["To"] = recipient_email

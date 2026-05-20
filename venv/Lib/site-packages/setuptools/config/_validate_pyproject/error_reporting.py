@@ -166,9 +166,7 @@ class _SummaryWriter:
             "prefixItems": f"{self._jargon('items')} (in order)",
             "items": "items",
             "contains": "contains at least one of",
-            "propertyNames": (
-                f"non-predefined acceptable {self._jargon('property names')}"
-            ),
+            "propertyNames": (f"non-predefined acceptable {self._jargon('property names')}"),
             "patternProperties": f"{self._jargon('properties')} named via pattern",
             "const": "predefined value",
             "enum": "one of",
@@ -226,9 +224,7 @@ class _SummaryWriter:
                         if simple
                         else f"\n{self(value, child_prefix, _path=child_path)}"
                     )
-                elif isinstance(value, list) and (
-                    key != "type" or self._is_property(child_path)
-                ):
+                elif isinstance(value, list) and (key != "type" or self._is_property(child_path)):
                     children = self._handle_list(value, item_prefix, child_path)
                     sep = " " if children.startswith("[") else "\n"
                     buffer.write(f"{sep}{children}")
@@ -244,9 +240,7 @@ class _SummaryWriter:
 
     def _filter_unecessary(self, schema: dict, path: Sequence[str]):
         return {
-            key: value
-            for key, value in schema.items()
-            if not self._is_unecessary([*path, key])
+            key: value for key, value in schema.items() if not self._is_unecessary([*path, key])
         }
 
     def _handle_simple_dict(self, value: dict, path: Sequence[str]) -> Optional[str]:
@@ -256,9 +250,7 @@ class _SummaryWriter:
             return f"{{{', '.join(self._inline_attrs(value, path))}}}\n"
         return None
 
-    def _handle_list(
-        self, schemas: list, prefix: str = "", path: Sequence[str] = ()
-    ) -> str:
+    def _handle_list(self, schemas: list, prefix: str = "", path: Sequence[str] = ()) -> str:
         if self._is_unecessary(path):
             return ""
 
@@ -267,9 +259,7 @@ class _SummaryWriter:
             return f"{repr_}\n"
 
         item_prefix = self._child_prefix(prefix, "- ")
-        return "".join(
-            self(v, item_prefix, _path=[*path, f"[{i}]"]) for i, v in enumerate(schemas)
-        )
+        return "".join(self(v, item_prefix, _path=[*path, f"[{i}]"]) for i, v in enumerate(schemas))
 
     def _is_property(self, path: Sequence[str]):
         """Check if the given path can correspond to an arbitrarily named property"""
@@ -296,9 +286,7 @@ class _SummaryWriter:
     def _value(self, value: Any, path: Sequence[str]) -> str:
         if path[-1] == "type" and not self._is_property(path):
             type_ = self._jargon(value)
-            return (
-                f"[{', '.join(type_)}]" if isinstance(value, list) else cast(str, type_)
-            )
+            return f"[{', '.join(type_)}]" if isinstance(value, list) else cast(str, type_)
         return repr(value)
 
     def _inline_attrs(self, schema: dict, path: Sequence[str]) -> Iterator[str]:

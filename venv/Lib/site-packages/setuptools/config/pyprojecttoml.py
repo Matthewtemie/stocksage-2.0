@@ -3,6 +3,7 @@ Load setuptools configuration from ``pyproject.toml`` files.
 
 **PRIVATE MODULE**: API reserved for setuptools internal usage only.
 """
+
 import logging
 import os
 import warnings
@@ -304,9 +305,7 @@ class _ConfigExpander:
             )
             raise OptionError(msg)
 
-    def _expand_directive(
-        self, specifier: str, directive, package_dir: Mapping[str, str]
-    ):
+    def _expand_directive(self, specifier: str, directive, package_dir: Mapping[str, str]):
         with _ignore_errors(self.ignore_option_errors):
             root_dir = self.root_dir
             if "file" in directive:
@@ -396,11 +395,13 @@ class _ConfigExpander:
             optional_dependencies_map = self.dynamic_cfg["optional-dependencies"]
             assert isinstance(optional_dependencies_map, dict)
             return {
-                group: _parse_requirements_list(self._expand_directive(
-                    f"tool.setuptools.dynamic.optional-dependencies.{group}",
-                    directive,
-                    {},
-                ))
+                group: _parse_requirements_list(
+                    self._expand_directive(
+                        f"tool.setuptools.dynamic.optional-dependencies.{group}",
+                        directive,
+                        {},
+                    )
+                )
                 for group, directive in optional_dependencies_map.items()
             }
         self._ensure_previously_set(dist, "optional-dependencies")
@@ -409,9 +410,7 @@ class _ConfigExpander:
 
 def _parse_requirements_list(value):
     return [
-        line
-        for line in value.splitlines()
-        if line.strip() and not line.strip().startswith("#")
+        line for line in value.splitlines() if line.strip() and not line.strip().startswith("#")
     ]
 
 
@@ -428,9 +427,7 @@ def _ignore_errors(ignore_option_errors: bool):
 
 
 class _EnsurePackagesDiscovered(_expand.EnsurePackagesDiscovered):
-    def __init__(
-        self, distribution: "Distribution", project_cfg: dict, setuptools_cfg: dict
-    ):
+    def __init__(self, distribution: "Distribution", project_cfg: dict, setuptools_cfg: dict):
         super().__init__(distribution)
         self._project_cfg = project_cfg
         self._setuptools_cfg = setuptools_cfg
@@ -490,4 +487,5 @@ class _InvalidFile(UserWarning):
     @classmethod
     def message(cls):
         from inspect import cleandoc
+
         return cleandoc(cls.__doc__)

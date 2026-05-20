@@ -22,12 +22,12 @@ ALPACA SETUP:
 =============================================================================
 """
 
-import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta
-import os
 import json
+import os
+from datetime import datetime, timedelta
 
+import numpy as np
+import pandas as pd
 
 # ═══════════════════════════════════════════════════════════════
 # CONFIGURATION
@@ -198,7 +198,7 @@ def generate_sample_data(ticker, start_date=DATA_START):
     drift = total_return / n
     returns = np.random.normal(drift, profile["vol"], n)
 
-    # Add slight autocorrelation (momentum) — 
+    # Add slight autocorrelation (momentum) —
     for i in range(1, n):
         returns[i] += 0.03 * returns[i - 1]
 
@@ -208,9 +208,7 @@ def generate_sample_data(ticker, start_date=DATA_START):
     rng = np.abs(np.random.normal(0, profile["vol"] * 0.6, n))
     high = close * (1 + rng)
     low = close * (1 - rng)
-    opn = np.clip(
-        close * (1 + np.random.normal(0, profile["vol"] * 0.2, n)), low, high
-    )
+    opn = np.clip(close * (1 + np.random.normal(0, profile["vol"] * 0.2, n)), low, high)
     vol = np.random.lognormal(np.log(profile["avg_vol"]), 0.3, n).astype(int)
 
     df = pd.DataFrame(
@@ -218,10 +216,7 @@ def generate_sample_data(ticker, start_date=DATA_START):
         index=dates[:n],
     )
     df.index.name = "timestamp"
-    print(
-        f"   Generated {n} sample days for {ticker} "
-        f"(${close[0]:.2f} → ${close[-1]:.2f})"
-    )
+    print(f"   Generated {n} sample days for {ticker} " f"(${close[0]:.2f} → ${close[-1]:.2f})")
     return df
 
 
@@ -249,7 +244,7 @@ FEATURE_COLUMNS = [
 
 def engineer_features(df):
     """
-    FEATURE ENGINEERING 
+    FEATURE ENGINEERING
 
     We transform raw OHLCV data into 13 meaningful features:
 
@@ -355,9 +350,7 @@ def prepare_all_stocks(api_key=None, secret_key=None):
         print(f"  {name} ({ticker})")
 
         raw = (
-            fetch_stock_data_alpaca(client, ticker)
-            if use_alpaca
-            else generate_sample_data(ticker)
+            fetch_stock_data_alpaca(client, ticker) if use_alpaca else generate_sample_data(ticker)
         )
         if raw is None:
             continue
@@ -375,9 +368,7 @@ def prepare_all_stocks(api_key=None, secret_key=None):
                 f"{featured.index[0].strftime('%Y-%m-%d')} → "
                 f"{featured.index[-1].strftime('%Y-%m-%d')}"
             ),
-            "avg_daily_return": round(
-                float(featured["daily_return"].mean() * 100), 4
-            ),
+            "avg_daily_return": round(float(featured["daily_return"].mean() * 100), 4),
             "volatility": round(float(featured["volatility_20"].iloc[-1] * 100), 2),
             "data_source": source_label,
         }
@@ -400,6 +391,5 @@ if __name__ == "__main__":
     print("\n SUMMARY:")
     for t, s in summary.items():
         print(
-            f"  {t}: ${s['latest_close']} | {s['total_samples']} samples | "
-            f"{s['data_source']}"
+            f"  {t}: ${s['latest_close']} | {s['total_samples']} samples | " f"{s['data_source']}"
         )

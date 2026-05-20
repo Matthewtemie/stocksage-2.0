@@ -5,7 +5,7 @@
 ### data_pipeline.py
 - Lines 51-87: Alpaca client setup
 - Lines 90-159: fetch_stock_data() — hits Alpaca API
-- Line 120: get_stock_bars() calls 
+- Line 120: get_stock_bars() calls
 - Lines 228-325: engineer_features() — computes 13 features and data cleaning
 - Lines 328-405: Full pipeline runner
 
@@ -21,7 +21,10 @@
 - - Lines 109-140:  DAILY SCHEDULER — runs in both local and production mode
 
 ## Refactor decisions / questions
-
+1. STOCKS and FEATURE_COLUMNS are shared constants:
+train_models.py:46: from data_pipeline import STOCKS, FEATURE_COLUMNS, prepare_all_stocks
+These are constants getting imported into multiple files. In 2.0 they don't belong in a data module — they belong in src/stocksage/config.py, alongside paths and API keys. That way data/, features/, models/, and api/ all import from one central place, and nobody depends on a "data module" just to get a list of stock tickers
+2. prepare_all_stocks is an orchestrator. It's imported by both train_models.py and startup.py, and it does fetch+features in one call. In 2.0, with fetch.py and build_features.py as separate modules, you'll want a small orchestrator function somewhere — probably src/stocksage/pipeline.py (a new file) — that calls fetch then features in sequence.
 
 ## Things to fix in 2.0
 - - engineer_features() is a 100-line god function; each of the 13 features should probably be its own small function
@@ -73,4 +76,3 @@ _legacy/train_models.py:43:from sklearn.ensemble import RandomForestRegressor, G
 _legacy/train_models.py:44:from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 _legacy/train_models.py:46:from data_pipeline import STOCKS, FEATURE_COLUMNS, prepare_all_stocks
 (venv)
-
